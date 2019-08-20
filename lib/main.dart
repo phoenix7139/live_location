@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:latlong/latlong.dart' as ll;
 
 void main() => runApp(MyApp());
 
@@ -28,6 +29,14 @@ class _FireMapState extends State<FireMap> {
   var location = new Location();
   var lat, long, accuracy;
 
+  var corlat = 23.547484;
+  var corlong = 87.289325;
+
+  var ovallat = 23.549896;
+  var ovallong = 87.291763;
+
+  var meter1, meter2;
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +45,14 @@ class _FireMapState extends State<FireMap> {
       setState(() {
         lat = currentLocation.latitude;
         long = currentLocation.longitude;
+        ll.Distance distance = new ll.Distance();
+        meter1 =
+            distance(new ll.LatLng(lat, long), new ll.LatLng(corlat, corlong));
+        meter2 =
+            distance(new ll.LatLng(lat, long), new ll.LatLng(ovallat, ovallong));  
         accuracy = currentLocation.accuracy;
+        // print(lat);
+        // print(long);
       });
     });
   }
@@ -69,9 +85,27 @@ class _FireMapState extends State<FireMap> {
               borderRadius: BorderRadius.circular(13),
             ),
             child: Column(
-              children: <Widget>[Text("LATITUDE: $lat"), Text("LONGITUDE: $long"), Text("ACCURACY: $accuracy")],
+              children: <Widget>[
+                Text("LATITUDE: $lat"),
+                Text("LONGITUDE: $long"),
+                Text("ACCURACY: $accuracy")
+              ],
             ),
           ),
+        ),
+        Positioned(
+          bottom: 140,
+          left: 20,
+          right: 20,
+          top: 405,
+          child: Container(
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.green[400],
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Text("CORRECT LOCATION: $meter1 || $meter2")),
         ),
       ],
     );
