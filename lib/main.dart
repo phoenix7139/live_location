@@ -29,8 +29,8 @@ class _FireMapState extends State<FireMap> {
   var location = new Location();
   var lat, long, accuracy;
 
-  var corlat = 23.547484;
-  var corlong = 87.289325;
+  var corlat = 23.547771;
+  var corlong = 87.289857;
 
   var ovallat = 23.549896;
   var ovallong = 87.291763;
@@ -41,20 +41,23 @@ class _FireMapState extends State<FireMap> {
   void initState() {
     super.initState();
     //LocationAccuracy.HIGH;
-    location.onLocationChanged().listen((LocationData currentLocation) {
-      setState(() {
-        lat = currentLocation.latitude;
-        long = currentLocation.longitude;
-        ll.Distance distance = new ll.Distance();
-        meter1 =
-            distance(new ll.LatLng(lat, long), new ll.LatLng(corlat, corlong));
-        meter2 =
-            distance(new ll.LatLng(lat, long), new ll.LatLng(ovallat, ovallong));  
-        accuracy = currentLocation.accuracy;
-        // print(lat);
-        // print(long);
+    {
+      location.changeSettings(accuracy: LocationAccuracy.HIGH);
+      location.onLocationChanged().listen((LocationData currentLocation) {
+        setState(() {
+          lat = currentLocation.latitude;
+          long = currentLocation.longitude;
+          ll.Distance distance = new ll.Distance();
+          meter1 = distance(
+              new ll.LatLng(lat, long), new ll.LatLng(corlat, corlong));
+          meter2 = distance(
+              new ll.LatLng(lat, long), new ll.LatLng(ovallat, ovallong));
+          accuracy = currentLocation.accuracy;
+          // print(lat);
+          // print(long);
+        });
       });
-    });
+    }
   }
 
   @override
@@ -99,14 +102,34 @@ class _FireMapState extends State<FireMap> {
           right: 20,
           top: 405,
           child: Container(
-              margin: EdgeInsets.all(20),
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.green[400],
-                borderRadius: BorderRadius.circular(13),
-              ),
-              child: Text("CORRECT LOCATION: $meter1 || $meter2")),
+            margin: EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: meter1 < accuracy && meter1 < 30
+                  ? Colors.green[400]
+                  : Colors.red[400],
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Text("room: $meter1"),
+          ),
         ),
+        Positioned(
+          bottom: 200,
+          left: 20,
+          right: 20,
+          top: 345,
+          child: Container(
+            margin: EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: meter2 < accuracy && meter2 < 30
+                  ? Colors.green[400]
+                  : Colors.red[400],
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Text("ovals: $meter2"),
+          ),
+        )
       ],
     );
   }
